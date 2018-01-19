@@ -1,0 +1,21 @@
+{
+  "name": "jankenpon-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "Cry",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^5.0.5",
+    "dotenv": "^4.0.0",
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "socket.io": "^2.0.3"
+  }
+}

@@ -13,6 +13,7 @@ class Gateway {
 
   subscribe () {
     this.p.on('ready', (player) => this.r.playerIsReady(player))
+    this.p.on('choice', (player, shape) => this.r.playerChoice(player, shape))
   }
 }
 

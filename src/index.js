@@ -14,6 +14,9 @@ class Gateway {
   subscribe () {
     this.p.on('ready', (player) => this.r.playerIsReady(player))
     this.p.on('choice', (player, shape) => this.r.playerChoice(player, shape))
+
+    this.r.on('start', player => this.p.opponentFound(player))
+    this.r.on('announce', room => this.p.announceResults(room))
   }
 }
 

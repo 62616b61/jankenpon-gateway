@@ -12,7 +12,7 @@ class Player {
   }
 
   ready () {
-    this.ready = true
+    this.isReady = true
   }
 
   reset () {
@@ -32,7 +32,7 @@ class Player {
   }
 
   hasMadeChoice () {
-    return !!this.shape
+    return this.shape !== null
   }
 }
 
@@ -55,25 +55,35 @@ class PlayerService {
     this.io.on('connection', connection => {
       const player = new Player(connection.id)
 
+      console.log('new connection', connection.id)
+
       connection.on('ready', () => this.events.emit('ready', player))
       connection.on('disconnect', () => this.events.emit('disconnect', player))
       connection.on('choice', (shape) => {
-        player.choice(shape)
-        this.events.emit('choice', player)
+        this.events.emit('choice', player, shape)
       })
 
 
       this.events.emit('connect', player)
-      this.events.emit('ready', player)
     })
   }
 
-  announceResults (winner) {
-    this.io.to(winner.id).emit('win')
-    this.io.to(winner.opponent.id).emit('lose')
+  opponentFound (player) {
+    this.io.to(player.id).emit('start')
+    this.io.to(player.opponent.id).emit('start')
+  }
 
-    winner.reset()
-    winner.opponent.reset()
+  announceResults (room) {
+    if (room.result === 'tie') {
+      this.io.to(room.player1.id).emit('announce', 'tie')
+      this.io.to(room.player1.opponent.id).emit('announce', 'tie')
+    } else {
+      this.io.to(room.winner.id).emit('announce', 'win')
+      this.io.to(room.winner.opponent.id).emit('announce', 'lose')
+    }
+
+    room.player1.reset()
+    room.player2.reset()
   }
 
   on (event, callback) {

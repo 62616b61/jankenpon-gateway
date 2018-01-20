@@ -2,6 +2,8 @@
 
 const EventEmitter = require('events')
 
+const name = ['rock', 'paper', 'scissors']
+
 function Jankenpon (shape1, shape2) {
   const rules = [2, 0, 1]
 
@@ -14,6 +16,7 @@ class Room {
   constructor (player1, player2) {
     this.player1 = player1
     this.player2 = player2
+    this.result = null
     this.winner = null
 
     this.play()
@@ -25,8 +28,14 @@ class Room {
   }
 
   jankenpon () {
-    const winner = Jankenpon(this.player1.shape, this.player2.shape)
-    this.winner = winner === 0 ? player1 : player2
+    const result = Jankenpon(this.player1.shape, this.player2.shape)
+
+    if (result === 0) {
+      this.result = 'tie'
+    } else {
+      this.result = true
+      this.winner = result === 1 ? this.player1 : this.player2
+    }
   }
 
   choice () {
@@ -56,6 +65,8 @@ class RoomService {
     this.rooms.push(room)
     this.queue.shift()
     this.queue.shift()
+
+    this.events.emit('start', room.player1)
   }
 
   playerDisconnected (player) {
@@ -73,18 +84,19 @@ class RoomService {
     }
   }
 
-  playerChoice (player) {
+  playerChoice (player, shape) {
+    player.choice(shape)
     const room = this.findRoomByPlayer(player)
 
     room.choice()
 
-    if (room.winner) {
-      this.events.emit('announce', this.room.winner)
+    if (room.result) {
+      this.events.emit('announce', room)
     }
   }
 
   on (event, callback) {
-    const events = ['announce']
+    const events = ['announce', 'start']
 
     if (events.includes(event)) return this.events.on(event, callback)
     else throw new Error(`Attempting to subscribe to unknown event "${event}"`)

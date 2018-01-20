@@ -8,7 +8,7 @@ const testConfig = {}
 const prodConfig = {}
 
 const defaultConfig = {
-  PLAYER_SOCKET_PORT: process.env.PLAYER_SOCKET_PORT || 3030
+  PLAYER_SOCKET_PORT: process.env.PORT || 3030
 }
 
 function envConfig (env) {

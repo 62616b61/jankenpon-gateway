@@ -58,11 +58,13 @@ class PlayerService {
       console.log('new connection', connection.id)
 
       connection.on('ready', () => this.events.emit('ready', player))
-      connection.on('disconnect', () => this.events.emit('disconnect', player))
+      connection.on('disconnect', () => {
+        if (player.opponent) this.op.to(player.opponent.id).emit('opponent-left')
+        this.events.emit('disconnect', player)
+      })
       connection.on('choice', (shape) => {
         this.events.emit('choice', player, shape)
       })
-
 
       this.events.emit('connect', player)
     })

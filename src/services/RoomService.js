@@ -95,6 +95,10 @@ class RoomService {
     }
   }
 
+  playerLeft (player) {
+    this.queue = this.queue.filter(p => p.id !== player.id)
+  }
+
   on (event, callback) {
     const events = ['announce', 'start']
 

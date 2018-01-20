@@ -11,11 +11,10 @@
   "author": "Cry",
   "license": "ISC",
   "devDependencies": {
-    "cross-env": "^5.0.5",
-    "dotenv": "^4.0.0",
     "nodemon": "^1.12.1"
   },
   "dependencies": {
+    "dotenv": "^4.0.0",
     "socket.io": "^2.0.3"
   }
 }

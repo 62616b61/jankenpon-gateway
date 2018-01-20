@@ -59,8 +59,10 @@ class PlayerService {
 
       connection.on('ready', () => this.events.emit('ready', player))
       connection.on('disconnect', () => {
-        if (player.opponent) this.io.to(player.opponent.id).emit('opponent-left')
         this.events.emit('disconnect', player)
+        if (player.opponent) {
+          this.io.to(player.opponent.id).emit('opponent-left')
+        }
       })
       connection.on('choice', (shape) => {
         this.events.emit('choice', player, shape)

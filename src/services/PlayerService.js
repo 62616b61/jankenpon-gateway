@@ -47,7 +47,7 @@ class PlayerService {
   }
 
   setup () {
-    this.io.attach(this.constants.PLAYER_SOCKET_PORT)
+    this.io.attach(this.constants.PORT)
     console.log(`Player server port: ${this.constants.PORT}`)
   }
 

@@ -1,47 +1,14 @@
 // Room service, eh?
 
+const uuid = require('uuid/v1')
 const EventEmitter = require('events')
-
-const name = ['rock', 'paper', 'scissors']
-
-function Jankenpon (shape1, shape2) {
-  const rules = [2, 0, 1]
-
-  if (shape1 === shape2) return 0
-  else if (rules[shape1] === shape2) return 1
-  else return 2
-}
 
 class Room {
   constructor (player1, player2) {
+    this.id = uuid()
     this.player1 = player1
     this.player2 = player2
-    this.result = null
-    this.winner = null
-
-    this.play()
-  }
-
-  play () {
-    this.player1.play(this.player2)
-    this.player2.play(this.player1)
-  }
-
-  jankenpon () {
-    const result = Jankenpon(this.player1.shape, this.player2.shape)
-
-    if (result === 0) {
-      this.result = 'tie'
-    } else {
-      this.result = true
-      this.winner = result === 1 ? this.player1 : this.player2
-    }
-  }
-
-  choice () {
-    if (this.player1.hasMadeChoice() && this.player2.hasMadeChoice()) {
-      this.jankenpon()
-    }
+    this.instance = null
   }
 }
 
@@ -59,14 +26,23 @@ class RoomService {
     )
   }
 
-  createRoomAndPlay () {
+  findRoomById (id) {
+    return this.rooms.find(room => room.id === id)
+  }
+
+  createRoom () {
     const room = new Room(this.queue[0], this.queue[1])
 
     this.rooms.push(room)
     this.queue.shift()
     this.queue.shift()
 
-    this.events.emit('start', room.player1)
+    this.events.emit('preparing-room', room)
+  }
+
+  instanceIsReady (id) {
+    const room = this.findRoomById(id)
+    this.events.emit('room-is-ready', room)
   }
 
   playerDisconnected (player) {
@@ -80,7 +56,7 @@ class RoomService {
     this.queue.push(player)
 
     if (this.queue.length >= 2) {
-      this.createRoomAndPlay()
+      this.createRoom()
     }
   }
 
@@ -91,7 +67,7 @@ class RoomService {
     room.choice()
 
     if (room.result) {
-      this.events.emit('announce', room)
+      this.events.emit('announcement', room)
     }
   }
 
@@ -100,7 +76,7 @@ class RoomService {
   }
 
   on (event, callback) {
-    const events = ['announce', 'start']
+    const events = ['preparing-room', 'room-is-ready', 'announcement']
 
     if (events.includes(event)) return this.events.on(event, callback)
     else throw new Error(`Attempting to subscribe to unknown event "${event}"`)

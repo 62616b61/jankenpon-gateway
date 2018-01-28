@@ -72,9 +72,9 @@ class PlayerService {
     })
   }
 
-  opponentFound (player) {
-    this.io.to(player.id).emit('start')
-    this.io.to(player.opponent.id).emit('start')
+  roomIsReady (room) {
+    this.io.to(room.player1.id).emit('start')
+    this.io.to(room.player2.id).emit('start')
   }
 
   announceResults (room) {

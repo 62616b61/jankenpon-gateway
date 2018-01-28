@@ -5,14 +5,9 @@ const EventEmitter = require('events')
 class Player {
   constructor (id) {
     this.id = id
-    this.opponent = null
-    this.shape = null
-    this.isPlaying = false
-    this.isReady = false
-  }
-
-  ready () {
-    this.isReady = true
+    this.room = null
+    this.ready = false
+    this.chose = true
   }
 
   reset () {
@@ -20,19 +15,6 @@ class Player {
     this.shape = null
     this.isPlaying = false
     this.isReady = false
-  }
-
-  play (opponent) {
-    this.opponent = opponent
-    this.isPlaying = true
-  }
-
-  choice (shape) {
-    this.shape = shape
-  }
-
-  hasMadeChoice () {
-    return this.shape !== null
   }
 }
 
@@ -65,6 +47,7 @@ class PlayerService {
         }
       })
       connection.on('choice', (shape) => {
+        player.chose = true
         this.events.emit('choice', player, shape)
       })
 

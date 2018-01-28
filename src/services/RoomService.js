@@ -1,14 +1,20 @@
 // Room service, eh?
 
 const uuid = require('uuid/v1')
+const request = require('request')
 const EventEmitter = require('events')
+
+const url = (id) => `jankenpon-game-room-svc-${id}.default.svc.cluster.local:3000`
 
 class Room {
   constructor (player1, player2) {
     this.id = uuid()
+    this.ip = null
     this.player1 = player1
     this.player2 = player2
-    this.instance = null
+
+    this.player1.room = this.id
+    this.player2.room = this.id
   }
 }
 
@@ -40,8 +46,11 @@ class RoomService {
     this.events.emit('preparing-room', room)
   }
 
-  instanceIsReady (id) {
+  instanceIsReady (id, ip) {
+    console.log('instance is ready', id, ip)
     const room = this.findRoomById(id)
+    room.ip = ip
+
     this.events.emit('room-is-ready', room)
   }
 
@@ -50,9 +59,9 @@ class RoomService {
   }
 
   playerIsReady (player) {
-    if (player.isReady) return
+    if (player.ready) return
 
-    player.ready()
+    player.ready = true
     this.queue.push(player)
 
     if (this.queue.length >= 2) {
@@ -61,14 +70,14 @@ class RoomService {
   }
 
   playerChoice (player, shape) {
-    player.choice(shape)
+    console.log('choice', player, shape)
     const room = this.findRoomByPlayer(player)
 
-    room.choice()
-
-    if (room.result) {
-      this.events.emit('announcement', room)
-    }
+    request(`http://${room.ip}:3000/status`, function (error, response, body) {
+      console.log('error:', error);
+      console.log('statusCode:', response && response.statusCode);
+      console.log('body:', body);
+    })
   }
 
   playerLeft (player) {

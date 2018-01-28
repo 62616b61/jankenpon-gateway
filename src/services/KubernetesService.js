@@ -1,5 +1,4 @@
-const podDef = require('../../kubernetes/pod.json')
-//const svcDef = require('../../kubernetes/service.json')
+const podDef = require('../../kubernetes/other/game-instance-pod.json')
 
 const k8s = require('kubernetes-client')
 const EventEmitter = require('events')

@@ -6,7 +6,7 @@ metadata:
 spec:
   clusterIP: None
   selector:
-    app: jankenpon-game-room
+    app: jankenpon-game-instance
   ports:
   - protocol: TCP
     port: 3000

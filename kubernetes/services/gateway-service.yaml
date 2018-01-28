@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: jankenpon-gateway-service
+  namespace: default
+spec:
+  selector:
+    app: jankenpon-gateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3030

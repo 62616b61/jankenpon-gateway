@@ -1,0 +1,11 @@
+FROM node:9.4.0-alpine
+
+RUN mkdir -p /app
+WORKDIR /app
+
+ADD package.json yarn.lock /app/
+RUN yarn --pure-lockfile
+
+COPY . /app
+
+CMD ["yarn", "start"]

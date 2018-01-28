@@ -1,0 +1,19 @@
+sudo: required
+services:
+- docker
+language: bash
+script:
+# prepare qemu
+- docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+# build images
+- docker build -f Dockerfile.arm -t kurai/jankenpon-gateway-arm .
+- docker build -f Dockerfile.amd64 -t kurai/jankenpon-gateway-amd64 .
+
+# push images
+- >
+  if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+    docker push kurai/jankenpon-gateway-arm
+    docker push kurai/jankenpon-gateway-amd64
+  fi

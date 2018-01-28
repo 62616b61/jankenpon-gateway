@@ -2,7 +2,11 @@
   "kind": "Pod",
   "apiVersion": "v1",
   "metadata": {
-    "name": "jankenpon-game-instance"
+    "name": "jankenpon-game-room",
+    "labels": {
+      "room": "",
+      "app": "jankenpon-game-room"
+    }
   },
   "spec": {
     "restartPolicy": "Never",

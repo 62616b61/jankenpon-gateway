@@ -1,4 +1,6 @@
-const pod = require('../../kubernetes/pod.json')
+const podDef = require('../../kubernetes/pod.json')
+//const svcDef = require('../../kubernetes/service.json')
+
 const k8s = require('kubernetes-client')
 const EventEmitter = require('events')
 
@@ -10,16 +12,16 @@ class KubernetesService {
   }
 
   spawnGameInstance (id) {
-    const instance = Object.assign({}, pod)
-    const name = instance.metadata.name + '-' + id
+    const pod = JSON.parse(JSON.stringify(podDef))
 
-    instance.metadata.name = name
+    pod.metadata.name = pod.metadata.name + '-' + id
+    pod.metadata.labels.room = id
 
-    this.core.namespaces.pods.post({body: instance}, () => {})
+    this.core.namespaces.pods.post({body: pod}, () => {})
 
     const readinessInterval = setInterval(() => {
-      this.core.ns.pods(name).get((err, res) => {
-        const conds = res.status.conditions || []
+      this.core.ns.pods.matchLabels({ room: id }).get((err, res) => {
+        const conds = res.items[0].status.conditions || []
         const readinessCond = conds.length
           ? conds.find(c => c.type === 'Ready')
           : null
@@ -28,8 +30,10 @@ class KubernetesService {
           : false
 
         if (ready) {
-          this.events.emit('instance-ready', id)
           clearInterval(readinessInterval)
+
+          const ip = res.items[0].status.podIP
+          this.events.emit('instance-ready', id, ip)
         }
       });
     }, 1000)

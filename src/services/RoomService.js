@@ -1,47 +1,20 @@
 // Room service, eh?
 
+const uuid = require('uuid/v1')
+const request = require('request')
 const EventEmitter = require('events')
 
-const name = ['rock', 'paper', 'scissors']
-
-function Jankenpon (shape1, shape2) {
-  const rules = [2, 0, 1]
-
-  if (shape1 === shape2) return 0
-  else if (rules[shape1] === shape2) return 1
-  else return 2
-}
+const url = (id) => `jankenpon-game-room-svc-${id}.default.svc.cluster.local:3000`
 
 class Room {
   constructor (player1, player2) {
+    this.id = uuid()
+    this.ip = null
     this.player1 = player1
     this.player2 = player2
-    this.result = null
-    this.winner = null
 
-    this.play()
-  }
-
-  play () {
-    this.player1.play(this.player2)
-    this.player2.play(this.player1)
-  }
-
-  jankenpon () {
-    const result = Jankenpon(this.player1.shape, this.player2.shape)
-
-    if (result === 0) {
-      this.result = 'tie'
-    } else {
-      this.result = true
-      this.winner = result === 1 ? this.player1 : this.player2
-    }
-  }
-
-  choice () {
-    if (this.player1.hasMadeChoice() && this.player2.hasMadeChoice()) {
-      this.jankenpon()
-    }
+    this.player1.room = this.id
+    this.player2.room = this.id
   }
 }
 
@@ -59,14 +32,26 @@ class RoomService {
     )
   }
 
-  createRoomAndPlay () {
+  findRoomById (id) {
+    return this.rooms.find(room => room.id === id)
+  }
+
+  createRoom () {
     const room = new Room(this.queue[0], this.queue[1])
 
     this.rooms.push(room)
     this.queue.shift()
     this.queue.shift()
 
-    this.events.emit('start', room.player1)
+    this.events.emit('preparing-room', room)
+  }
+
+  instanceIsReady (id, ip) {
+    console.log('instance is ready', id, ip)
+    const room = this.findRoomById(id)
+    room.ip = ip
+
+    this.events.emit('room-is-ready', room)
   }
 
   playerDisconnected (player) {
@@ -74,25 +59,25 @@ class RoomService {
   }
 
   playerIsReady (player) {
-    if (player.isReady) return
+    if (player.ready) return
 
-    player.ready()
+    player.ready = true
     this.queue.push(player)
 
     if (this.queue.length >= 2) {
-      this.createRoomAndPlay()
+      this.createRoom()
     }
   }
 
   playerChoice (player, shape) {
-    player.choice(shape)
+    console.log('choice', player, shape)
     const room = this.findRoomByPlayer(player)
 
-    room.choice()
-
-    if (room.result) {
-      this.events.emit('announce', room)
-    }
+    request(`http://${room.ip}:3000/status`, function (error, response, body) {
+      console.log('error:', error);
+      console.log('statusCode:', response && response.statusCode);
+      console.log('body:', body);
+    })
   }
 
   playerLeft (player) {
@@ -100,7 +85,7 @@ class RoomService {
   }
 
   on (event, callback) {
-    const events = ['announce', 'start']
+    const events = ['preparing-room', 'room-is-ready', 'announcement']
 
     if (events.includes(event)) return this.events.on(event, callback)
     else throw new Error(`Attempting to subscribe to unknown event "${event}"`)

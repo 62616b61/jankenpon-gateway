@@ -92,7 +92,7 @@ class RoomService {
     const playerNum = player.id === room.player1 ? 0 : 1
 
     request(
-      `http://${room.ip}:3000/choice/${playerNum}/${shape}`,
+      `http://${room.ip}:3000/choose/${playerNum}/${shape}`,
       (err, res) => console.log('room-choice', err || res.statusCode)
     )
   }

@@ -23,7 +23,9 @@ class Gateway {
       this.k.spawnGameInstance(room.id)
       //TODO: add call to PlayerService
     })
-    this.r.on('announcement', room => this.p.announceResults(room))
+    this.r.on('announcement', (room, results, score) => {
+      this.p.announceResults(room, results, score)
+    })
 
     this.k.on('instance-ready', (id, ip) => this.r.roomIsReady(id, ip))
   }

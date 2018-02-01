@@ -67,6 +67,7 @@ class RoomService {
             const score = data.score
 
             console.log('game has finished', results, score)
+            this.events.emit('announcement', room, results, score)
 
             clearInterval(statusInterval)
           }

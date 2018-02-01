@@ -11,10 +11,7 @@ class Player {
   }
 
   reset () {
-    this.opponent = null
-    this.shape = null
-    this.isPlaying = false
-    this.isReady = false
+    this.chose = false
   }
 }
 
@@ -60,13 +57,16 @@ class PlayerService {
     this.io.to(room.player2.id).emit('start')
   }
 
-  announceResults (room) {
-    if (room.result === 'tie') {
-      this.io.to(room.player1.id).emit('announce', 'tie')
-      this.io.to(room.player1.opponent.id).emit('announce', 'tie')
+  announceResults (room, results, score) {
+    if (results.tie) {
+      this.io.to(room.player1.id).emit('announcement', 'tie')
+      this.io.to(room.player2.id).emit('announcement', 'tie')
     } else {
-      this.io.to(room.winner.id).emit('announce', 'win')
-      this.io.to(room.winner.opponent.id).emit('announce', 'lose')
+      const winner = results.winner === 0 ? room.player1 : room.player2
+      const looser = results.winner === 0 ? room.player2 : room.player1
+
+      this.io.to(winner.id).emit('announcement', 'win')
+      this.io.to(looser.id).emit('announcement', 'lose')
     }
 
     room.player1.reset()

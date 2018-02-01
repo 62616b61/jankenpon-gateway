@@ -60,12 +60,11 @@ class RoomService {
         `http://${room.ip}:3000/status`,
         (err, res, body) => {
           console.log('room-status', err || body)
+          const data = JSON.parse(body)
 
-          console.log(body.state, body.results, body.score)
-
-          if (body.state === 'finished') {
-            const results = body.results
-            const score = body.score
+          if (data.state === 'finished') {
+            const results = data.results
+            const score = data.score
 
             console.log('game has finished', results, score)
 

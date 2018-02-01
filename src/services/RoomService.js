@@ -15,6 +15,8 @@ class Room {
 
     this.player1.room = this.id
     this.player2.room = this.id
+
+    this.statusInterval = null
   }
 }
 
@@ -55,7 +57,7 @@ class RoomService {
   }
 
   checkRoomStatus (room) {
-    const statusInterval = setInterval(() => {
+    room.statusInterval = setInterval(() => {
       request(
         `http://${room.ip}:3000/status`,
         (err, res, body) => {
@@ -65,7 +67,9 @@ class RoomService {
             const results = body.results
             const score = body.score
 
-            clearInterval(statusInterval)
+            console.log('game has finished', results, score)
+
+            clearInterval(room.statusInterval)
           }
         }
       )

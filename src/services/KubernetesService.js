@@ -3,10 +3,13 @@ const podDef = require('../../kubernetes/other/game-instance-pod.json')
 const k8s = require('kubernetes-client')
 const EventEmitter = require('events')
 
-
 class KubernetesService {
   constructor () {
-    this.core = new k8s.Core(k8s.config.fromKubeconfig())
+    this.core = new k8s.Core(Object.assign(
+      {},
+      k8s.config.getInCluster(),
+      { namespace: 'default' }
+    ))
     this.events = new EventEmitter()
   }
 

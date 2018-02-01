@@ -23,6 +23,9 @@ class KubernetesService {
 
     const readinessInterval = setInterval(() => {
       this.core.ns.pods.matchLabels({ room: id }).get((err, res) => {
+        if (err) throw err
+        else console.log(res)
+
         const conds = res.items[0].status.conditions || []
         const readinessCond = conds.length
           ? conds.find(c => c.type === 'Ready')

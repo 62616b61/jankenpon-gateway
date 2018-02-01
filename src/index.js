@@ -14,15 +14,16 @@ class Gateway {
   }
 
   subscribe () {
-    this.p.on('ready', (player) => this.r.playerIsReady(player))
+    this.p.on('ready', player => this.r.playerIsReady(player))
     this.p.on('choice', (player, shape) => this.r.playerChoice(player, shape))
-    this.p.on('disconnect', (player) => this.r.playerLeft(player))
+    this.p.on('disconnect', player => this.r.playerDisconnected(player))
 
-    this.r.on('room-is-ready', room => this.p.roomIsReady(room))
+    this.r.on('opponent-left', player => this.p.opponentLeft(player))
     this.r.on('preparing-room', room => {
       this.k.spawnGameInstance(room.id)
       //TODO: add call to PlayerService
     })
+    this.r.on('room-is-ready', room => this.p.roomIsReady(room))
     this.r.on('announcement', (room, results, score) => {
       this.p.announceResults(room, results, score)
     })

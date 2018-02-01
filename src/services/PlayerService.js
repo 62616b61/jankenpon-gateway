@@ -4,7 +4,6 @@ const EventEmitter = require('events')
 class Player {
   constructor (id) {
     this.id = id
-    this.room = null
     this.ready = false
     this.chose = true
   }
@@ -36,12 +35,7 @@ class PlayerService {
       console.log('new connection', connection.id)
 
       connection.on('ready', () => this.events.emit('ready', player))
-      connection.on('disconnect', () => {
-        this.events.emit('disconnect', player)
-        if (player.opponent) {
-          this.io.to(player.opponent.id).emit('opponent-left')
-        }
-      })
+      connection.on('disconnect', () => this.events.emit('disconnect', player))
       connection.on('choice', (shape) => {
         player.chose = true
         this.events.emit('choice', player, shape)
@@ -49,6 +43,10 @@ class PlayerService {
 
       this.events.emit('connect', player)
     })
+  }
+
+  opponentLeft (player) {
+    this.io.to(player.id).emit('opponent-left')
   }
 
   roomIsReady (room) {

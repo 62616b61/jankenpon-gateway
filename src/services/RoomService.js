@@ -77,7 +77,24 @@ class RoomService {
   }
 
   playerDisconnected (player) {
+    if (!player.ready) return
 
+    const room = this.findRoomByPlayer(player)
+
+    if (room) {
+      const opponent = room.player1.id === player.id
+        ? room.player2
+        : room.player1
+
+      this.events.emit('opponent-left', opponent)
+
+      request(
+        `http://${room.ip}:3000/exit`,
+        (err, res) => console.log('room-exit', err || res.statusCode)
+      )
+    } else {
+      this.queue = this.queue.filter(p => p.id !== player.id)
+    }
   }
 
   playerIsReady (player) {
@@ -101,12 +118,8 @@ class RoomService {
     )
   }
 
-  playerLeft (player) {
-    this.queue = this.queue.filter(p => p.id !== player.id)
-  }
-
   on (event, callback) {
-    const events = ['preparing-room', 'room-is-ready', 'announcement']
+    const events = ['opponent-left', 'preparing-room', 'room-is-ready', 'announcement']
 
     if (events.includes(event)) return this.events.on(event, callback)
     else throw new Error(`Attempting to subscribe to unknown event "${event}"`)

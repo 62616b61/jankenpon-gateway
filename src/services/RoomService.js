@@ -89,7 +89,7 @@ class RoomService {
 
   playerChoice (player, shape) {
     const room = this.findRoomByPlayer(player)
-    const playerNum = player.id === room.player1 ? 0 : 1
+    const playerNum = player.id === room.player1.id ? 0 : 1
 
     request(
       `http://${room.ip}:3000/choose/${playerNum}/${shape}`,

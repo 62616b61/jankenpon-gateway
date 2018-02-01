@@ -25,7 +25,7 @@ class Gateway {
     })
     this.r.on('announcement', room => this.p.announceResults(room))
 
-    this.k.on('instance-ready', (id, ip) => this.r.instanceIsReady(id, ip))
+    this.k.on('instance-ready', (id, ip) => this.r.roomIsReady(id, ip))
   }
 }
 

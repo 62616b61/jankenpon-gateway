@@ -46,12 +46,30 @@ class RoomService {
     this.events.emit('preparing-room', room)
   }
 
-  instanceIsReady (id, ip) {
-    console.log('instance is ready', id, ip)
+  roomIsReady (id, ip) {
     const room = this.findRoomById(id)
     room.ip = ip
 
+    this.checkRoomStatus(room)
     this.events.emit('room-is-ready', room)
+  }
+
+  checkRoomStatus (room) {
+    const statusInterval = setInterval(() => {
+      request(
+        `http://${room.ip}:3000/status`,
+        (err, res, body) => {
+          console.log('room-status', err || body)
+
+          if (body.state === 'finished') {
+            const results = body.results
+            const score = body.score
+
+            clearInterval(statusInterval)
+          }
+        }
+      )
+    }, 1000)
   }
 
   playerDisconnected (player) {
@@ -70,14 +88,13 @@ class RoomService {
   }
 
   playerChoice (player, shape) {
-    console.log('choice', player, shape)
     const room = this.findRoomByPlayer(player)
+    const playerNum = player.id === room.player1 ? 0 : 1
 
-    request(`http://${room.ip}:3000/status`, function (error, response, body) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
-      console.log('body:', body);
-    })
+    request(
+      `http://${room.ip}:3000/choice/${playerNum}/${shape}`,
+      (err, res) => console.log('room-choice', err || res.statusCode)
+    )
   }
 
   playerLeft (player) {

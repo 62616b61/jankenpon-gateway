@@ -90,6 +90,7 @@ class RoomService {
         ? room.player2
         : room.player1
 
+      this.rooms = this.rooms.filter(r => r.id !== room.id)
       this.events.emit('opponent-left', opponent)
 
       request(

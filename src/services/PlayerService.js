@@ -1,7 +1,6 @@
 const io = require('socket.io')
 const EventEmitter = require('events')
 
-
 class Player {
   constructor (id) {
     this.id = id

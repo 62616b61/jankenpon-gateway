@@ -18,7 +18,10 @@ class Gateway {
     this.p.on('choice', (player, shape) => this.r.playerChoice(player, shape))
     this.p.on('disconnect', player => this.r.playerDisconnected(player))
 
-    this.r.on('opponent-left', player => this.p.opponentLeft(player))
+    this.r.on('opponent-left', (player, room) => {
+      this.p.opponentLeft(player)
+      this.k.terminateGameInstance(room.id)
+    })
     this.r.on('preparing-room', room => {
       this.k.spawnGameInstance(room.id)
       //TODO: add call to PlayerService

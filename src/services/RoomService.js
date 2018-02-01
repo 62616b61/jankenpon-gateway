@@ -91,12 +91,7 @@ class RoomService {
         : room.player1
 
       this.rooms = this.rooms.filter(r => r.id !== room.id)
-      this.events.emit('opponent-left', opponent)
-
-      request(
-        `http://${room.ip}:3000/exit`,
-        (err, res) => console.log('room-exit', err || res.statusCode)
-      )
+      this.events.emit('opponent-left', opponent, room)
     } else {
       this.queue = this.queue.filter(p => p.id !== player.id)
     }

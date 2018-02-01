@@ -43,6 +43,13 @@ class KubernetesService {
     }, 1000)
   }
 
+  terminateGameInstance (id) {
+    this.core.namespaces.pods.delete({ name: 'jankenpon-game-instance-' + id}, (err, res) => {
+      console.log(err)
+      console.log(res)
+    });
+  }
+
   on (event, callback) {
     const events = ['instance-ready']
 

@@ -28,8 +28,8 @@
           }
         ],
         "readinessProbe": {
-          "initialDelaySeconds": "3",
-          "periodSeconds": "1",
+          "initialDelaySeconds": 3,
+          "periodSeconds": 1,
           "httpGet": {
             "path": "/status",
             "port": "app-port"

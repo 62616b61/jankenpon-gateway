@@ -6,7 +6,6 @@ metadata:
   labels:
     app: jankenpon-gateway
 spec:
-  serviceAccountName: jankenpon-gateway-sa
   selector:
     matchLabels:
       app: jankenpon-gateway
@@ -15,6 +14,7 @@ spec:
       labels:
         app: jankenpon-gateway
     spec:
+      serviceAccountName: jankenpon-gateway-sa
       containers:
       - image: kurai/jankenpon-gateway-arm
         imagePullPolicy: Always

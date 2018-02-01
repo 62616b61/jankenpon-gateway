@@ -49,6 +49,11 @@ class PlayerService {
     this.io.to(player.id).emit('opponent-left')
   }
 
+  roomIsBeingPrepared (room) {
+    this.io.to(room.player1.id).emit('room-is-being-prepared')
+    this.io.to(room.player2.id).emit('room-is-being-prepared')
+  }
+
   roomIsReady (room) {
     this.io.to(room.player1.id).emit('start')
     this.io.to(room.player2.id).emit('start')

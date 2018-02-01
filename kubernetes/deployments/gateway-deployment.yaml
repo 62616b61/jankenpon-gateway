@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - image: kurai/jankenpon-gateway-arm
+        imagePullPolicy: Always
         name: gateway
         ports:
         - containerPort: 3030

@@ -59,7 +59,11 @@ class RoomService {
       request(
         `http://${room.ip}:3000/status`,
         (err, res, body) => {
-          console.log('room-status', err || body)
+          if (err) {
+            clearInterval(statusInterval)
+            return
+          }
+
           const data = JSON.parse(body)
 
           if (data.state === 'finished') {

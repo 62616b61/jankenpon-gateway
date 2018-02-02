@@ -14,7 +14,6 @@
       {
         "name": "jankenpon-game-instance",
         "image": "kurai/jankenpon-game-instance-arm:c050e80d",
-        "imagePullPolicy": "Always",
         "ports": [
           {
             "name": "app-port",

@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: jankenpon-gateway-sa
       containers:
-      - image: kurai/jankenpon-gateway-arm:834be48a
+      - image: kurai/jankenpon-gateway-arm
         imagePullPolicy: Always
         name: gateway
         ports:

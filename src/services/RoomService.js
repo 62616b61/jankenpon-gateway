@@ -112,6 +112,8 @@ class RoomService {
     const room = this.findRoomByPlayer(player)
     const playerNum = player.id === room.player1.id ? 0 : 1
 
+    console.log('player has made a choice:', room, playerNum, player.id, shape)
+
     request(
       `http://${room.ip}:3000/choose/${playerNum}/${shape}`,
       (err, res) => console.log('room-choice', err || res.statusCode)

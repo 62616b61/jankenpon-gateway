@@ -67,6 +67,8 @@ class PlayerService {
       const winner = results.winner === 0 ? room.player1 : room.player2
       const looser = results.winner === 0 ? room.player2 : room.player1
 
+      console.log('announce results:', room, results, score)
+
       this.io.to(winner.id).emit('announcement', 'win')
       this.io.to(looser.id).emit('announcement', 'lose')
     }

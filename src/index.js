@@ -25,7 +25,6 @@ class Gateway {
     this.r.on('preparing-room', room => {
       this.k.spawnGameInstance(room.id)
       this.p.roomIsBeingPrepared(room)
-      //TODO: add call to PlayerService
     })
     this.r.on('room-is-ready', room => this.p.roomIsReady(room))
     this.r.on('announcement', (room, results, score) => {

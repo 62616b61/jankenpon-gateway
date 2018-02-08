@@ -13,7 +13,7 @@
     "containers": [
       {
         "name": "jankenpon-game-instance",
-        "image": "kurai/jankenpon-game-instance-arm:fc56cac2",
+        "image": "kurai/jankenpon-game-instance-arm:143a3929",
         "ports": [
           {
             "name": "app-port",

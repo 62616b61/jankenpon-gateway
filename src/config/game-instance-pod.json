@@ -5,7 +5,9 @@
     "name": "jankenpon-game-instance",
     "labels": {
       "room": "",
-      "app": "jankenpon-game-instance"
+      "app": "jankenpon-game-instance",
+      "blinkt": "show",
+      "blinktColor": "FF0000"
     }
   },
   "spec": {

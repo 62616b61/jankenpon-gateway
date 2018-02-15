@@ -7,7 +7,7 @@
       "room": "",
       "app": "jankenpon-game-instance",
       "blinkt": "show",
-      "blinktColor": "FF0000"
+      "blinktColor": "0000FF"
     }
   },
   "spec": {

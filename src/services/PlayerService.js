@@ -1,3 +1,4 @@
+const server = require('http')
 const io = require('socket.io')
 const EventEmitter = require('events')
 
@@ -16,7 +17,13 @@ class Player {
 class PlayerService {
   constructor (constants) {
     this.constants = constants
-    this.io = io()
+
+    this.server = server.createServer((req, res) => {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('okay');
+    })
+
+    this.io = io(this.server)
     this.events = new EventEmitter()
 
     this.setup()
@@ -24,7 +31,7 @@ class PlayerService {
   }
 
   setup () {
-    this.io.attach(this.constants.PORT)
+    this.server.listen(this.constants.PORT)
     console.log(`Player server port: ${this.constants.PORT}`)
   }
 

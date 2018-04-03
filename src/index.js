@@ -1,12 +1,10 @@
-const constants = require('./config/constants')
-
 const PlayerService = require('./services/PlayerService')
 const RoomService = require('./services/RoomService')
 const KubernetesService = require('./services/KubernetesService')
 
 class Gateway {
   constructor () {
-    this.p = new PlayerService(constants)
+    this.p = new PlayerService()
     this.r = new RoomService()
     this.k = new KubernetesService()
 

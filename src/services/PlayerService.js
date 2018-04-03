@@ -1,3 +1,5 @@
+const { PORT } = require('../config/constants')
+
 const server = require('http')
 const io = require('socket.io')
 const EventEmitter = require('events')
@@ -15,9 +17,7 @@ class Player {
 }
 
 class PlayerService {
-  constructor (constants) {
-    this.constants = constants
-
+  constructor () {
     this.server = server.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/plain' });
       res.end('okay');
@@ -31,8 +31,8 @@ class PlayerService {
   }
 
   setup () {
-    this.server.listen(this.constants.PORT)
-    console.log(`Player server port: ${this.constants.PORT}`)
+    this.server.listen(PORT)
+    console.log(`Player server port: ${PORT}`)
   }
 
   listen () {

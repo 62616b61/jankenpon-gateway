@@ -1,0 +1,40 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "jankenpon-game-instance",
+    "labels": {
+      "room": "",
+      "app": "jankenpon-game-instance"
+    }
+  },
+  "spec": {
+    "restartPolicy": "Never",
+    "containers": [
+      {
+        "name": "jankenpon-game-instance",
+        "image": "kurai/jankenpon-game-instance-amd64",
+        "ports": [
+          {
+            "name": "app-port",
+            "containerPort": 3000
+          }
+        ],
+        "env": [
+          {
+            "name": "PORT",
+            "value": "3000"
+          }
+        ],
+        "readinessProbe": {
+          "initialDelaySeconds": 3,
+          "periodSeconds": 1,
+          "httpGet": {
+            "path": "/status",
+            "port": "app-port"
+          }
+        }
+      }
+    ]
+  }
+}

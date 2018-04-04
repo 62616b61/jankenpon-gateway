@@ -6,8 +6,9 @@ const sillyname = require('sillyname')
 const EventEmitter = require('events')
 
 class Player {
-  constructor (id) {
+  constructor (id, name) {
     this.id = id
+    this.name = name
     this.ready = false
     this.chose = true
   }
@@ -38,14 +39,13 @@ class PlayerService {
 
   listen () {
     this.io.on('connection', connection => {
-      const player = new Player(connection.id)
-      const name = sillyname()
+      const player = new Player(connection.id, sillyname())
 
-      console.log('new connection', name, connection.id)
+      console.log('new connection', player.name, player.id)
 
       connection.on('ready', () => {
         this.events.emit('ready', player)
-        connection.emit('generated-name', name)
+        connection.emit('generated-name', player.name)
       })
       connection.on('disconnect', () => this.events.emit('disconnect', player))
       connection.on('choice', (shape) => {
@@ -61,9 +61,9 @@ class PlayerService {
     this.io.to(player.id).emit('opponent-left')
   }
 
-  roomIsBeingPrepared (room) {
-    this.io.to(room.player1.id).emit('room-is-being-prepared')
-    this.io.to(room.player2.id).emit('room-is-being-prepared')
+  opponentFound (player1, player2) {
+    this.io.to(player1.id).emit('opponent-found', player2.name)
+    this.io.to(player2.id).emit('opponent-found', player1.name)
   }
 
   roomIsReady (room) {

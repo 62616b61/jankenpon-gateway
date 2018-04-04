@@ -26,7 +26,7 @@ class Gateway {
     })
     this.r.on('preparing-room', room => {
       this.k.spawnGameInstance(room.id)
-      this.p.roomIsBeingPrepared(room)
+      this.p.opponentFound(room.player1, room.player2)
     })
     this.r.on('room-is-ready', room => this.p.roomIsReady(room))
     this.r.on('announcement', (room, results, score) => {

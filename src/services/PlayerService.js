@@ -2,6 +2,7 @@ const { PORT } = require('../config/constants')
 
 const server = require('http')
 const io = require('socket.io')
+const sillyname = require('sillyname')
 const EventEmitter = require('events')
 
 class Player {
@@ -38,10 +39,14 @@ class PlayerService {
   listen () {
     this.io.on('connection', connection => {
       const player = new Player(connection.id)
+      const name = sillyname()
 
-      console.log('new connection', connection.id)
+      console.log('new connection', name, connection.id)
 
-      connection.on('ready', () => this.events.emit('ready', player))
+      connection.on('ready', () => {
+        this.events.emit('ready', player)
+        connection.emit('generated-name', name)
+      })
       connection.on('disconnect', () => this.events.emit('disconnect', player))
       connection.on('choice', (shape) => {
         player.chose = true

@@ -29,7 +29,7 @@ class KubernetesService {
       this.core.ns.pods.matchLabels({ room: id }).get((err, res) => {
         if (err) throw err
 
-        const conds = res.items[0].status.conditions || []
+        const conds = res.items && res.items[0].status.conditions || []
         const readinessCond = conds.length
           ? conds.find(c => c.type === 'Ready')
           : null

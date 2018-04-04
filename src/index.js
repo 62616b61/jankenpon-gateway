@@ -4,11 +4,15 @@ const KubernetesService = require('./services/KubernetesService')
 
 class Gateway {
   constructor () {
-    this.p = new PlayerService()
-    this.r = new RoomService()
-    this.k = new KubernetesService()
+    try {
+      this.p = new PlayerService()
+      this.r = new RoomService()
+      this.k = new KubernetesService()
 
-    this.subscribe()
+      this.subscribe()
+    } catch (e) {
+      console.error('Error:', e.message)
+    }
   }
 
   subscribe () {

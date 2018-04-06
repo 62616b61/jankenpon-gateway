@@ -70,8 +70,18 @@ class RoomService {
             const results = data.results
             const score = data.score
 
-            console.log('game has finished', results, score)
-            this.events.emit('announcement', room, results, score)
+            request(
+              `http://${room.ip}:3000/reset`,
+              (err, res) => {
+                if (err) console.log('room-reset', err)
+
+                console.log('game has finished', results, score)
+                this.events.emit('announcement', room, results, score)
+
+                room.player1.reset()
+                room.player2.reset()
+              }
+            )
 
             clearInterval(statusInterval)
           }

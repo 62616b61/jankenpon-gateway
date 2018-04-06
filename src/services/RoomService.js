@@ -80,6 +80,8 @@ class RoomService {
 
                 room.player1.reset()
                 room.player2.reset()
+
+                this.checkRoomStatus(room)
               }
             )
 

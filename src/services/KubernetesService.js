@@ -19,7 +19,6 @@ class KubernetesService {
 
   spawnGameInstance () {
     console.log('SPAWN GAME INSTANCE')
-    return false
 
     const id = this.rooms++
 

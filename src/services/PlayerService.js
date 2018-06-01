@@ -9,12 +9,6 @@ class Player {
   constructor (id, name) {
     this.id = id
     this.name = name
-    this.ready = false
-    this.chose = true
-  }
-
-  reset () {
-    this.chose = false
   }
 }
 
@@ -41,24 +35,12 @@ class PlayerService {
     this.io.on('connection', connection => {
       const player = new Player(connection.id, sillyname())
 
-      console.log('new connection', player.name, player.id)
-
-      connection.on('ready', () => {
-        this.events.emit('ready', player)
-        connection.emit('generated-name', player.name)
-      })
       connection.on('disconnect', () => this.events.emit('disconnect', player))
-      connection.on('choice', (shape) => {
-        player.chose = true
-        this.events.emit('choice', player, shape)
-      })
-
+      connection.emit('generated-name', player.name)
       this.events.emit('connect', player)
-    })
-  }
 
-  opponentLeft (player) {
-    this.io.to(player.id).emit('opponent-left')
+      console.log('new connection', player.name, player.id)
+    })
   }
 
   opponentFound (player1, player2) {
@@ -71,26 +53,8 @@ class PlayerService {
     this.io.to(room.player2.id).emit('start')
   }
 
-  announceResults (room, results, score) {
-    if (results.tie) {
-      this.io.to(room.player1.id).emit('announcement', 'tie')
-      this.io.to(room.player2.id).emit('announcement', 'tie')
-    } else {
-      const winner = results.winner === 0 ? room.player1 : room.player2
-      const looser = results.winner === 0 ? room.player2 : room.player1
-
-      console.log('announce results:', room, results, score)
-
-      this.io.to(winner.id).emit('announcement', 'win')
-      this.io.to(looser.id).emit('announcement', 'lose')
-    }
-
-    room.player1.reset()
-    room.player2.reset()
-  }
-
   on (event, callback) {
-    const events = ['connect', 'disconnect', 'choice', 'ready']
+    const events = ['connect', 'disconnect']
 
     if (events.includes(event)) return this.events.on(event, callback)
     else throw new Error(`Attempting to subscribe to unknown event "${event}"`)

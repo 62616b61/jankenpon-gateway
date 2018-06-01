@@ -1,12 +1,12 @@
 const PlayerService = require('./services/PlayerService')
-const RoomService = require('./services/RoomService')
+const QueueService = require('./services/QueueService')
 const KubernetesService = require('./services/KubernetesService')
 
 class Gateway {
   constructor () {
     try {
       this.p = new PlayerService()
-      this.r = new RoomService()
+      this.q = new QueueService()
       this.k = new KubernetesService()
 
       this.subscribe()
@@ -16,24 +16,16 @@ class Gateway {
   }
 
   subscribe () {
-    this.p.on('ready', player => this.r.playerIsReady(player))
-    this.p.on('choice', (player, shape) => this.r.playerChoice(player, shape))
-    this.p.on('disconnect', player => this.r.playerDisconnected(player))
+    this.p.on('connect', player => this.q.playerConnected(player))
+    this.p.on('disconnect', player => this.q.playerDisconnected(player))
 
-    this.r.on('opponent-left', (player, room) => {
-      this.p.opponentLeft(player)
-      this.k.terminateGameInstance(room.id)
+    this.q.on('preparing-room', (player1, player2) => {
+      this.k.spawnGameInstance()
+      this.p.opponentFound(player1, player2)
     })
-    this.r.on('preparing-room', room => {
-      this.k.spawnGameInstance(room.id)
-      this.p.opponentFound(room.player1, room.player2)
-    })
-    this.r.on('room-is-ready', room => this.p.roomIsReady(room))
-    this.r.on('announcement', (room, results, score) => {
-      this.p.announceResults(room, results, score)
-    })
+    this.q.on('room-is-ready', room => this.p.roomIsReady(room))
 
-    this.k.on('instance-ready', (id, ip) => this.r.roomIsReady(id, ip))
+    this.k.on('instance-ready', (id, ip) => this.p.roomIsReady(id, ip))
   }
 }
 

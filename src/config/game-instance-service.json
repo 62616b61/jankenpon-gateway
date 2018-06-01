@@ -1,0 +1,22 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "jankenpon-game-instance-service",
+    "namespace": "default"
+  },
+  "spec": {
+    "type": "NodePort",
+    "selector": {
+      "app": "jankenpon-game-instance",
+      "room": ""
+    },
+    "ports": [
+      {
+        "protocol": "TCP",
+        "port": 80,
+        "targetPort": 3030
+      }
+    ]
+  }
+}

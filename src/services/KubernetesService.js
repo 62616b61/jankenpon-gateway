@@ -1,26 +1,37 @@
 const { RUNTIME } = require('../config/constants')
-const pod = require('../config/game-instance-pod.json')
+const podDef = require('../config/game-instance-pod.json')
+const serviceDef = require('../config/game-instance-service.json')
 
 const k8s = require('kubernetes-client')
 const EventEmitter = require('events')
 
 class KubernetesService {
   constructor () {
-    this.core = new k8s.Core(Object.assign(
-      {},
-      k8s.config.getInCluster(),
-      { namespace: 'default' }
-    ))
+    //this.core = new k8s.Core(Object.assign(
+      //{},
+      //k8s.config.getInCluster(),
+      //{ namespace: 'default' }
+    //))
+    this.rooms = 0
+
     this.events = new EventEmitter()
   }
 
-  spawnGameInstance (id) {
-    const pod = JSON.parse(JSON.stringify(pod))
+  spawnGameInstance () {
+    console.log('SPAWN GAME INSTANCE')
+    return false
 
+    const id = this.rooms++
+
+    const pod = JSON.parse(JSON.stringify(podDef))
     pod.metadata.name = pod.metadata.name + '-' + id
     pod.metadata.labels.room = id
-
     this.core.namespaces.pods.post({body: pod}, () => {})
+
+    const service = JSON.parse(JSON.stringify(serviceDef))
+    service.metadata.name = service.metadata.name + '-' + id
+    service.metadata.labels.room = id
+    this.core.namespaces.services.post({body: service}, () => {})
 
     const readinessInterval = setInterval(() => {
       this.core.ns.pods.matchLabels({ room: id }).get((err, res) => {
@@ -42,13 +53,6 @@ class KubernetesService {
         }
       });
     }, 1000)
-  }
-
-  terminateGameInstance (id) {
-    this.core.namespaces.pods.delete({ name: 'jankenpon-game-instance-' + id}, (err, res) => {
-      console.log(err)
-      console.log(res)
-    });
   }
 
   on (event, callback) {

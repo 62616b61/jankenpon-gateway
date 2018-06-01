@@ -24,14 +24,14 @@ class KubernetesService {
 
     const pod = JSON.parse(JSON.stringify(podDef))
     pod.metadata.name = pod.metadata.name + '-' + id
-    pod.metadata.labels.room = id
+    pod.metadata.labels.room = String(id)
     this.core.namespaces.pods.post({body: pod}, (a, b) => {
       console.log('POD SPAWN', a, b)
     })
 
     const service = JSON.parse(JSON.stringify(serviceDef))
     service.metadata.name = service.metadata.name + '-' + id
-    service.spec.selector.room = id
+    service.spec.selector.room = String(id)
     this.core.namespaces.services.post({body: service}, (a, b) => {
       console.log('SERVICE SPAWN', a, b)
     })

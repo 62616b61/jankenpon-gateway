@@ -7,11 +7,11 @@ const EventEmitter = require('events')
 
 class KubernetesService {
   constructor () {
-    //this.core = new k8s.Core(Object.assign(
-      //{},
-      //k8s.config.getInCluster(),
-      //{ namespace: 'default' }
-    //))
+    this.core = new k8s.Core(Object.assign(
+      {},
+      k8s.config.getInCluster(),
+      { namespace: 'default' }
+    ))
     this.rooms = 0
 
     this.events = new EventEmitter()

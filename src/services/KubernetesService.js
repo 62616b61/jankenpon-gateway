@@ -29,7 +29,7 @@ class KubernetesService {
 
     const service = JSON.parse(JSON.stringify(serviceDef))
     service.metadata.name = service.metadata.name + '-' + id
-    service.metadata.labels.room = id
+    service.spec.selector.room = id
     this.core.namespaces.services.post({body: service}, () => {})
 
     const readinessInterval = setInterval(() => {

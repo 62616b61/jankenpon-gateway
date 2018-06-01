@@ -1,6 +1,5 @@
 const { RUNTIME } = require('../config/constants')
-const gkePod = require('../config/game-instance-pod-gke.json')
-const raspiPod = require('../config/game-instance-pod-raspi.json')
+const pod = require('../config/game-instance-pod.json')
 
 const k8s = require('kubernetes-client')
 const EventEmitter = require('events')
@@ -16,9 +15,7 @@ class KubernetesService {
   }
 
   spawnGameInstance (id) {
-    const pod = JSON.parse(JSON.stringify(
-      RUNTIME === 'raspi' ? raspiPod : gkePod
-    ))
+    const pod = JSON.parse(JSON.stringify(pod))
 
     pod.metadata.name = pod.metadata.name + '-' + id
     pod.metadata.labels.room = id

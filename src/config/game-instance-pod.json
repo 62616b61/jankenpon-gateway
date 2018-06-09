@@ -1,6 +1,6 @@
 {
-  "kind": "Pod",
-  "apiVersion": "v1",
+  "kind": "Job",
+  "apiVersion": "batch/v1",
   "metadata": {
     "name": "jankenpon-game-instance",
     "labels": {
@@ -11,32 +11,36 @@
     }
   },
   "spec": {
-    "restartPolicy": "Never",
-    "containers": [
-      {
-        "name": "jankenpon-game-instance",
-        "image": "kurai/jankenpon-game-instance-arm",
-        "ports": [
+    "template": {
+      "spec": {
+        "restartPolicy": "Never",
+        "containers": [
           {
-            "name": "app-port",
-            "containerPort": 3000
+            "name": "jankenpon-game-instance",
+            "image": "kurai/jankenpon-game-instance-arm",
+            "ports": [
+              {
+                "name": "app-port",
+                "containerPort": 3000
+              }
+            ],
+            "env": [
+              {
+                "name": "PORT",
+                "value": "3000"
+              }
+            ],
+            "readinessProbe": {
+              "initialDelaySeconds": 3,
+              "periodSeconds": 1,
+              "httpGet": {
+                "path": "/status",
+                "port": "app-port"
+              }
+            }
           }
-        ],
-        "env": [
-          {
-            "name": "PORT",
-            "value": "3000"
-          }
-        ],
-        "readinessProbe": {
-          "initialDelaySeconds": 3,
-          "periodSeconds": 1,
-          "httpGet": {
-            "path": "/status",
-            "port": "app-port"
-          }
-        }
+        ]
       }
-    ]
+    }
   }
 }

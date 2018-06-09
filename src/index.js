@@ -20,12 +20,11 @@ class Gateway {
     this.p.on('disconnect', player => this.q.playerDisconnected(player))
 
     this.q.on('preparing-room', (player1, player2) => {
-      this.k.spawnGameInstance()
+      this.k.spawnGameInstance(player1, player2)
       this.p.opponentFound(player1, player2)
     })
-    this.q.on('room-is-ready', room => this.p.roomIsReady(room))
 
-    this.k.on('instance-ready', (id, ip) => this.p.roomIsReady(id, ip))
+    this.k.on('instance-ready', (p1, p2, port) => this.p.roomIsReady(p1, p2, port))
   }
 }
 

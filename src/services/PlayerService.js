@@ -48,9 +48,9 @@ class PlayerService {
     this.io.to(player2.id).emit('opponent-found', player1.name)
   }
 
-  roomIsReady (room) {
-    this.io.to(room.player1.id).emit('start')
-    this.io.to(room.player2.id).emit('start')
+  roomIsReady (player1, player2, port) {
+    this.io.to(player1.id).emit('room-is-ready', port)
+    this.io.to(player2.id).emit('room-is-ready', port)
   }
 
   on (event, callback) {

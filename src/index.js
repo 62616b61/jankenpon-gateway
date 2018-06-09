@@ -29,8 +29,8 @@ class Gateway {
       this.p.opponentFound(room.player1, room.player2)
     })
     this.r.on('room-is-ready', room => this.p.roomIsReady(room))
-    this.r.on('announcement', (room, results, score) => {
-      this.p.announceResults(room, results, score)
+    this.r.on('announcement', (room, tie, winner, score) => {
+      this.p.announceResults(room, tie, winner, score)
     })
 
     this.k.on('instance-ready', (id, ip) => this.r.roomIsReady(id, ip))

@@ -4,8 +4,6 @@ const uuid = require('uuid/v1')
 const request = require('request')
 const EventEmitter = require('events')
 
-const url = (id) => `jankenpon-game-room-svc-${id}.default.svc.cluster.local:3000`
-
 class Room {
   constructor (player1, player2) {
     this.id = uuid()
@@ -69,14 +67,16 @@ class RoomService {
           if (data.state === 'finished') {
             const results = data.results
             const score = data.score
+            const tie = data.tie
+            const winner = data.winner
 
             request(
               `http://${room.ip}:3000/reset`,
               (err, res) => {
                 if (err) console.log('room-reset', err)
 
-                console.log('game has finished', results, score)
-                this.events.emit('announcement', room, results, score)
+                console.log('game has finished', tie, winner, score)
+                this.events.emit('announcement', room, tie, winner, score)
 
                 room.player1.reset()
                 room.player2.reset()
@@ -127,7 +127,7 @@ class RoomService {
     console.log('player has made a choice:', room, playerNum, player.id, shape)
 
     request(
-      `http://${room.ip}:3000/choose/${playerNum}/${shape}`,
+      `http://${room.ip}:3000/choose?player=${playerNum}&shape=${shape}`,
       (err, res) => console.log('room-choice', err || res.statusCode)
     )
   }

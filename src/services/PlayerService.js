@@ -71,15 +71,15 @@ class PlayerService {
     this.io.to(room.player2.id).emit('start')
   }
 
-  announceResults (room, results, score) {
-    if (results.tie) {
+  announceResults (room, tie, winnerNum, score) {
+    if (tie) {
       this.io.to(room.player1.id).emit('announcement', 'tie')
       this.io.to(room.player2.id).emit('announcement', 'tie')
     } else {
-      const winner = results.winner === 0 ? room.player1 : room.player2
-      const looser = results.winner === 0 ? room.player2 : room.player1
+      const winner = winnerNum === 0 ? room.player1 : room.player2
+      const looser = winnerNum === 0 ? room.player2 : room.player1
 
-      console.log('announce results:', room, results, score)
+      console.log('announce results:', room, tie, winnerNum, score)
 
       this.io.to(winner.id).emit('announcement', 'win')
       this.io.to(looser.id).emit('announcement', 'lose')
